@@ -1,11 +1,6 @@
-plugins {
-	id "org.flywaydb.flyway" version "4.0.3"
-}
+
 apply plugin: 'spring-boot'
 
-flyway {
-	url = 'jdbc:mysql://localhost:3306/fitness'
-}
 
 jar {
 	baseName = 'web1'
@@ -14,10 +9,7 @@ jar {
 
 dependencies {
   compile project(':data')
-	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-amqp')   //allows talk to rabbitMQ
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('io.jsonwebtoken:jjwt:0.6.0')
-	runtime('mysql:mysql-connector-java')  //actually needed by web; web running
 	testCompile('io.rest-assured:rest-assured:3.0.0')
 }

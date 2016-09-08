@@ -1,33 +1,25 @@
 package com.chyld.controllers;
 
 
-import com.chyld.dtos.AuthDto;
 import com.chyld.entities.*;
-import com.chyld.enums.RoleEnum;
-import com.chyld.security.JwtToken;
 import com.chyld.services.DeviceService;
-import com.chyld.utilities.JwtUtil;
-import com.chyld.services.RoleService;
-import com.chyld.services.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/runs")
 public class RunController {
 
     private DeviceService deviceService;
+    private RabbitTemplate rabbitTemplate;
+    private TopicExchange topicExchange;
 
 
     @Autowired
@@ -36,37 +28,58 @@ public class RunController {
 
     }
 
+
+    @Autowired
+    public void setTopicExchange(TopicExchange topicExchange){
+        this.topicExchange = topicExchange;
+    }
+
+    @Autowired
+    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
     @RequestMapping(value = "/{sn}/start", method = RequestMethod.POST)
     public ResponseEntity<?> createRun(@PathVariable String sn) {
 
-        Device d = deviceService.findDeviceBySerialNumber(sn);
 
 
-        if(d == null){
+        String strTopicExchange = topicExchange.getName();
 
-        } else {
+        rabbitTemplate.convertAndSend(strTopicExchange, "fit.topic.run.start", sn);
 
-            Run run = new Run();
-            run.setDevice(d);
-        }
+        return null;
 
-        deviceService.saveDevice(d);
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+//        Device d = deviceService.findDeviceBySerialNumber(sn);
+//
+//
+//        if(d == null){
+//
+//        } else {
+//
+//            Run run = new Run();
+//            run.setDevice(d);
+//        }
+//
+//        deviceService.saveDevice(d);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
     @RequestMapping(value = "/{sn}/stop", method = RequestMethod.POST)
     public ResponseEntity<?> stopRun(@PathVariable String sn) {
 
-        Device d = deviceService.findDeviceBySerialNumber(sn);
 
-        if(d == null){
-
-        } else {
-            Run run = deviceService.findActiveRun(d);
-            run.setStopTime(new Date());
-        }
-
-        deviceService.saveDevice(d);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+//        Device d = deviceService.findDeviceBySerialNumber(sn);
+//
+//        if(d == null){
+//
+//        } else {
+//            Run run = deviceService.findActiveRun(d);
+//            run.setStopTime(new Date());
+//        }
+//
+//        deviceService.saveDevice(d);
+//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        return null;
     }
 
 //    @RequestMapping(value = "", method = RequestMethod.GET)

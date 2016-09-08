@@ -5,13 +5,14 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
 @Table(name = "positions")
 @Data
-public class Position {
+public class Position implements Serializable {
     @Id
     @GeneratedValue
     private int id;
